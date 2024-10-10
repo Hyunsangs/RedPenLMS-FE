@@ -4,18 +4,17 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Register from 'Pages/Register';
 import Login from 'Pages/Login';
-import { ChakraProvider } from '@chakra-ui/react'
+import Main from 'Pages/Main';
+
 
 function App() {
   return (
-    <ChakraProvider>
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
+          <Route path="/dashboard/*" element={<Main />} />
         </Routes>
-    </ChakraProvider>
-    
   );
 }
 
