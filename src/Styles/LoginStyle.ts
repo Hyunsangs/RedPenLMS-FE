@@ -63,7 +63,7 @@ export const Notification = styled.div`
   opacity: 0.8;
 `
 
-export const LoginFormContainer = styled.div`
+export const LoginFormContainer = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;

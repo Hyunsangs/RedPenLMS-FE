@@ -60,7 +60,7 @@ export const RegisterContainer = styled.div`
   }
 `;
 
-export const RegisterFormContainer = styled.div`
+export const RegisterFormContainer = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
