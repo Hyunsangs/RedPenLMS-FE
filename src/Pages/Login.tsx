@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@chakra-ui/react';
-import { Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   GlobalDiv,
   LoginContainer,
@@ -30,9 +30,9 @@ export default function Login() {
       ...loginForm,
       [name]: value,
     });
-  };  
+  };
 
-  // 로그인 요청을 다루기 위한 리엑트 쿼리 뮤테이션 
+  // 로그인 요청을 다루기 위한 리엑트 쿼리 뮤테이션
   const mutation = useMutation<any, Error, LoginData>({
     mutationFn: () => loginUser(loginForm.studentId, loginForm.password),
     onSuccess: () => {
@@ -89,9 +89,12 @@ export default function Login() {
         </ExtraContainer>
         <hr />
         <Notification>
-          회원가입 시 RPlms의 서비스 약관 및 개인정보 처리방침을 확인하였으며, 동의합니다.
+          회원가입 시 RPlms의 서비스 약관 및 개인정보 처리방침을 확인하였으며,
+          동의합니다.
         </Notification>
-        {mutation.isError && <p>로그인 중 에러가 발생했습니다. 다시 시도해주세요.</p>}
+        {mutation.isError && (
+          <p>로그인 중 에러가 발생했습니다. 다시 시도해주세요.</p>
+        )}
       </LoginContainer>
     </GlobalDiv>
   );
