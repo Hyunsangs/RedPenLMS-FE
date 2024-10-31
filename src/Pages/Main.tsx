@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'Components/Modal';
 import StepForm from 'Components/StepForm';
-import Dashboard from 'Components/Dashboard';
+import DashboardHome from 'Components/DashboardHome';
 
 const Main = () => {
   const [isOnboarding, setIsOnboarding] = useState(true);
@@ -30,7 +30,7 @@ const Main = () => {
         </Modal>
       ) : (
         <div>
-          <Dashboard />
+          <DashboardHome />
         </div>
       )}
     </div>

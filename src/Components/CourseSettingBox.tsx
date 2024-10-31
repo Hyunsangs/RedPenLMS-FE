@@ -6,6 +6,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Button } from '@chakra-ui/react';
 
+
 export const CourseSettingContainer = styled.div`
   padding: 10px;
   width: 100%;
@@ -49,19 +50,24 @@ export const BannerBox = styled.div`
     border-radius: 10px;
     background-size: cover;
     background-position: center;
-
-
 `
+interface CourseSettingBoxProps {
+  onCourseSetting: () => void;
+}
 
-const CourseSetting: React.FC = () => {
+const CourseSetting: React.FC<CourseSettingBoxProps> = ({onCourseSetting}) => {
+
   return (
     <CourseSettingContainer>
-        <BannerBox></BannerBox>
+        <BannerBox />
         <CourseSettingBox>
             <h1>2024년 2학기 수강하는 과목이 없습니다.</h1>
             <h2>수강 과목을 설정하세요!</h2>
-            <Button width='300px' height='50px' colorScheme='blue'>시작하기</Button>
+            <Button
+            onClick={onCourseSetting} 
+            width='300px' height='50px' colorScheme='blue'>시작하기</Button>
         </CourseSettingBox>
+        
     </CourseSettingContainer>
   );
 };
