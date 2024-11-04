@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { IoHomeSharp } from "react-icons/io5";
-import { FaSearch } from "react-icons/fa";
-import { GoBellFill } from "react-icons/go";
-import { IoIosSettings } from "react-icons/io";
+import { FaRegThumbsUp } from "react-icons/fa6";
 import { PiBookFill } from "react-icons/pi";
 import { FaRegAddressCard } from "react-icons/fa";
 import { IoMdInformationCircleOutline } from "react-icons/io";
+import { Link } from 'react-router-dom';
+
 
 export const SidebarContainer = styled.aside`
   width: 250px;
@@ -19,7 +19,7 @@ export const SidebarContainer = styled.aside`
   justify-content: space-around;
 `;
 
-export const MenuItem = styled.div`
+export const MenuItem = styled(Link)`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,7 +40,7 @@ export const MenuTopContainer = styled.div`
 `
 
 export const MenuMiddleContainer = styled.div`
-    height: 50%;
+    height: 30%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -52,7 +52,7 @@ export const MenuBottomContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 15%;
+    height: 10%;
 `
 
 export const MenuTitle = styled.div`
@@ -81,16 +81,14 @@ const Sidebar: React.FC = () => {
         </MenuTopContainer>
         <Line />
         <MenuMiddleContainer>
-            <MenuItem><IoHomeSharp />홈</MenuItem>
-            <MenuItem><FaSearch />검색</MenuItem>
-            <MenuItem><GoBellFill />알림</MenuItem>
-            <MenuItem><IoIosSettings />설정</MenuItem>
-            <MenuItem><PiBookFill />과목</MenuItem>
+          <MenuItem to="/dashboard"><IoHomeSharp />홈</MenuItem>
+          <MenuItem to="/dashboard/mysubject"><PiBookFill />과목</MenuItem>
+          <MenuItem to="/dashboard/recommend"><FaRegThumbsUp />교과목 추천</MenuItem>
         </MenuMiddleContainer>
         <MenuBottomContainer>
             
-            <MenuItem><FaRegAddressCard />마이페이지</MenuItem>
-            <MenuItem><IoMdInformationCircleOutline />이용안내</MenuItem>
+          <MenuItem to="/dashboard/mypage"><FaRegAddressCard />마이페이지</MenuItem>
+          <MenuItem to="/info"><IoMdInformationCircleOutline />이용안내</MenuItem>
         </MenuBottomContainer>
     </SidebarContainer>
   );

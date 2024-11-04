@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import CourseSelection from './CourseSelection';
+import { Routes, Route } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import CourseSelection from './CourseSelection';
 import CourseSettingBox from './CourseSettingBox';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import MySubject from 'Pages/MySubject';
 
 const DashboardContainer = styled.div`
   display: flex;
@@ -13,36 +13,40 @@ const DashboardContainer = styled.div`
 `;
 
 const MainContent = styled.main`
-  flex: 1;
-  padding: 20px;
-  background-color: #f9f9f9;
+  width: 100%;
+  padding: 20px 100px;
+  background-color: #e9e9e9;
   overflow-y: auto;
-
 `;
 
-const Dashboard: React.FC = () => {
-
-  const navigate = useNavigate();
-  const [showCourseSelection, setShowCourseSelection] = useState(false)
+const DashboardHome: React.FC = () => {
+  const [showCourseSelection, setShowCourseSelection] = useState(false);
 
   const handleCourseSetting = () => {
     setShowCourseSelection(!showCourseSelection);
-  }
+  };
 
   return (
     <DashboardContainer>
       <Sidebar />
       <MainContent>
-        {/* showCourseSelection이 false일 때 CourseSettingBox 표시 */}
-        {!showCourseSelection ? (
-          <CourseSettingBox onCourseSetting={handleCourseSetting} />
-        ) : (
-          <CourseSelection onClose={() => setShowCourseSelection(false)} />
-        )}
-        
+        <Routes>
+          <Route
+            path="/"
+            element={
+              !showCourseSelection ? (
+                <CourseSettingBox onCourseSetting={handleCourseSetting} />
+              ) : (
+                <CourseSelection onClose={() => setShowCourseSelection(false)} />
+              )
+            }
+          />
+          <Route path="/mysubject" element={<MySubject />} />
+          {/* 필요한 경우 추가적인 라우트 설정 */}
+        </Routes>
       </MainContent>
     </DashboardContainer>
   );
 };
 
-export default Dashboard;
+export default DashboardHome;
