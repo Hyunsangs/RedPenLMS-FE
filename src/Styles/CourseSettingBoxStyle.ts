@@ -37,7 +37,7 @@ export const NoneCourseSettingBox = styled.div`
 `;
 
 export const CourseSettingBox = styled.div`
-
+white-space: nowrap;
   width: 100%;
   height: 60%;
   background-color: #2c3e50;
@@ -76,12 +76,13 @@ export const BannerBox = styled.div`
     font-size: 32px;
     color: white;
     font-weight: 700;
-  
+    white-space: nowrap;
     background-image: url('/img/dashboardBanner.jpg');
     border: 3px solid grey;
     border-radius: 10px;
     background-size: cover;
     background-position: center;
+    overflow: hidden;
 `
 
 export const CourseBox = styled.div`

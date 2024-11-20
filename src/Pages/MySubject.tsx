@@ -147,10 +147,9 @@ const MySubject: React.FC = () => {
   const studentId = localStorage.getItem('studentId') || '';
   const { data: coursesData = {}, isLoading, error } = useMyCourses(studentId);
   console.log(coursesData);
+
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
-  const [expandedWeeks, setExpandedWeeks] = useState<{
-    [key: number]: boolean;
-  }>({});
+  const [expandedWeeks, setExpandedWeeks] = useState<{ [key: number]: boolean }>({});
 
   const toggleCourse = (courseName: string) => {
     setExpandedCourse(expandedCourse === courseName ? null : courseName);
@@ -163,6 +162,8 @@ const MySubject: React.FC = () => {
   if (isLoading) return <Loading />;
   if (error) return <p>데이터를 가져오는 중 오류가 발생했습니다.</p>;
 
+  const hasCourses = Object.entries(coursesData).length > 0; // 교과목 데이터 여부 확인
+
   return (
     <MySubjectContainer>
       <MySubjectTitle>나의 교과목 강의</MySubjectTitle>
@@ -171,63 +172,63 @@ const MySubject: React.FC = () => {
         <div>강의 이름</div>
         <div>과목코드 | 학점</div>
       </MySubjectHeader>
-      {Object.entries(coursesData).map(([courseName, weeks]) => (
-        <CourseContainer
-          key={courseName}
-          onClick={() => toggleCourse(courseName)}
-          isExpanded={expandedCourse === courseName}
-        >
-          <CourseHeader>
-            <CourseTitle>{courseName}</CourseTitle>
-            {expandedCourse === courseName ? (
-              <IoChevronUp />
-            ) : (
-              <IoChevronDown />
-            )}
-          </CourseHeader>
-          {expandedCourse === courseName && (
-            <CourseDetails>
-              {weeks.map((week) => (
-                <WeekContainer
-                  key={week.id}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleWeek(week.week);
-                  }}
-                  isExpanded={expandedWeeks[week.week]}
-                >
-                  <CourseHeader>
-                    <div>{`Week ${week.week}`}</div>
-                    {expandedWeeks[week.week] ? (
-                      <IoChevronUp />
-                    ) : (
-                      <IoChevronDown />
+      {hasCourses ? (
+        Object.entries(coursesData).map(([courseName, weeks]) => (
+          <CourseContainer
+            key={courseName}
+            onClick={() => toggleCourse(courseName)}
+            isExpanded={expandedCourse === courseName}
+          >
+            <CourseHeader>
+              <CourseTitle>{courseName}</CourseTitle>
+              {expandedCourse === courseName ? <IoChevronUp /> : <IoChevronDown />}
+            </CourseHeader>
+            {expandedCourse === courseName && (
+              <CourseDetails>
+                {weeks.map((week) => (
+                  <WeekContainer
+                    key={week.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWeek(week.week);
+                    }}
+                    isExpanded={expandedWeeks[week.week]}
+                  >
+                    <CourseHeader>
+                      <div>{`Week ${week.week}`}</div>
+                      {expandedWeeks[week.week] ? <IoChevronUp /> : <IoChevronDown />}
+                    </CourseHeader>
+                    {expandedWeeks[week.week] && (
+                      <div style={{ paddingLeft: '20px', color: '#000000' }}>
+                        {week.weeklyContent}
+                      </div>
                     )}
-                  </CourseHeader>
-                  {expandedWeeks[week.week] && (
-                    <div style={{ paddingLeft: '20px', color: '#000000' }}>
-                      {week.weeklyContent}
-                    </div>
-                  )}
-                </WeekContainer>
-              ))}
-            </CourseDetails>
-          )}
-        </CourseContainer>
-      ))}
+                  </WeekContainer>
+                ))}
+              </CourseDetails>
+            )}
+          </CourseContainer>
+        ))
+      ) : (
+        <p>사용자의 교과목이 없습니다.</p>
+      )}
       <LectureRecommendContainer>
         <LectureRecommendTitle>강의 추천</LectureRecommendTitle>
         <Line />
-        {Object.entries(coursesData).map(([courseName, weeks]) => (
-          <LectureVideoContainer key={courseName}>
-            <LectureTitle>{courseName}</LectureTitle>
-            <VideoContainer>
-              <VideoBox />
-              <VideoBox />
-              <VideoBox />
-            </VideoContainer>
-          </LectureVideoContainer>
-        ))}
+        {hasCourses ? (
+          Object.entries(coursesData).map(([courseName, weeks]) => (
+            <LectureVideoContainer key={courseName}>
+              <LectureTitle>{courseName}</LectureTitle>
+              <VideoContainer>
+                <VideoBox />
+                <VideoBox />
+                <VideoBox />
+              </VideoContainer>
+            </LectureVideoContainer>
+          ))
+        ) : (
+          <p>사용자의 교과목이 없습니다.</p>
+        )}
       </LectureRecommendContainer>
     </MySubjectContainer>
   );

@@ -34,6 +34,7 @@ const Sidebar: React.FC = () => {
     logout(); // 실제 로그아웃 요청 실행
     localStorage.removeItem('studentId');
     localStorage.removeItem('username');
+    localStorage.removeItem('jobId');
     navigate('/login');
   };
 

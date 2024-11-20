@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { jobOptions } from 'Constants/jobOptions';
 import { useNavigate } from 'react-router-dom';
 import { useSchoolCourseCheck } from 'hooks/useSchoolCourseCheck'
-import { UserCourse } from 'Interface/interface';
+import Loading from 'Components/Loading';
+import { deleteCourse } from 'Api/api';
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -130,11 +131,9 @@ const Mypage: React.FC = () => {
     if (storedStudentId) setStudentId(storedStudentId);
   }, []);
 
-  const { data: schoolCourses = [], isLoading } = useSchoolCourseCheck(
-    studentId || '',
-  );
+  const { data: schoolCourses = [], isLoading, refetch } = useSchoolCourseCheck(studentId || '');
   if (isLoading) {
-    <div>...Loading</div>
+    <Loading />
   }
   
   console.log('myPage의 들어있는 SchoolCourse: ',schoolCourses);
@@ -144,10 +143,18 @@ const Mypage: React.FC = () => {
     console.log(`선택된 직무: ${event.target.value}`);
   };
 
-  const handleDeleteCourse = (courseName: string) => {
-    // 강의 삭제 로직 추가
-    console.log(`${courseName} 삭제`);
+   // 삭제 버튼 클릭 핸들러
+   const handleDeleteCourse = (courseName: string) => {
+    if (!studentId) {
+      alert('사용자 정보가 없습니다. 다시 로그인 해주세요.');
+      return;
+    }
+
+    if (window.confirm(`${courseName} 강의를 삭제하시겠습니까?`)) {
+      deleteCourse(studentId, courseName, refetch); // 삭제 API 호출
+    }
   };
+
 
   return (
     <PageContainer>

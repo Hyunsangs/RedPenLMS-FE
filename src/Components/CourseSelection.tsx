@@ -20,6 +20,7 @@ import {
   CompletionButton,
 } from 'Styles/CourseSelectionStyle';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 
@@ -31,6 +32,7 @@ const CourseSelection: React.FC = () => {
   const [studentId, setStudentId] = useState<string | null>(
     localStorage.getItem("studentId")
   );
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!studentId) {
@@ -87,17 +89,24 @@ const CourseSelection: React.FC = () => {
         alert("사용자 정보가 없습니다.");
         return;
       }
-  
-     // selectedCourses 배열 변환
-     const coursesToSave = selectedCourses.map((course) => course.courseName);
-  
+
+      // 선택된 과목명 리스트로 변환
+      const coursesToSave = selectedCourses.map((course) => course.courseName);
+
       console.log("보낼 데이터:", coursesToSave);
-  
+
       // API 호출
-      await saveUserCourses( studentId ,coursesToSave);
+      await saveUserCourses(studentId, coursesToSave);
+
+      // queryClient에 invalidateQueries를 사용해서 
+      // 바로 다시 schoolCourseCheck 데이터를 강제로 리프레쉬 하도록 만듬.
+      // 그렇게 해서 설정 완료 버튼 눌렀을 때 바로 수강과목이 dashboard에 보일 수 있게 수정.
+      queryClient.invalidateQueries({
+        queryKey: ['schoolCourseCheck', studentId],
+      });
+
       alert("과목 설정이 완료되었습니다!");
-      navigate('/dashboard');
-      
+      navigate('/dashboard'); // 설정 완료 후 대시보드로 이동
     } catch (error) {
       console.error("과목 저장 실패:", error);
       alert("과목 저장에 실패했습니다.");

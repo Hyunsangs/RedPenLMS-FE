@@ -44,10 +44,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     }
     mutate(loginForm, {
       onSuccess: (response) => {
-        const { studentId, username } = response; 
+        const { studentId, userName, jobId } = response; 
         alert('로그인 성공');
         localStorage.setItem('studentId', studentId);
-        localStorage.setItem('username', username);
+        localStorage.setItem('username', userName);
+        localStorage.setItem('jobId', jobId)
         console.log('성공했을때 studentId값 확인:', studentId);
         queryClient.setQueryData(['studentId'], studentId);
         onLoginSuccess(studentId); // studentId를 상위로 전달

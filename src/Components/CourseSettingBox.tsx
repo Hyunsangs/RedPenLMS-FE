@@ -9,11 +9,10 @@ import {
   ButtonContainer,
   NoneCourseSettingBox, 
 } from 'Styles/CourseSettingBoxStyle';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button} from '@chakra-ui/react';
 import { CourseSettingBoxProps } from 'Interface/interface';
 import { useSchoolCourseCheck } from 'hooks/useSchoolCourseCheck';
-import { UserCourse } from 'Interface/interface';
 import { useNavigate } from 'react-router-dom';
 
 const CourseSetting: React.FC<CourseSettingBoxProps> = ({
@@ -23,6 +22,9 @@ const CourseSetting: React.FC<CourseSettingBoxProps> = ({
   const { data: schoolCourses = [], isLoading, error } = useSchoolCourseCheck(studentId);
   const navigate = useNavigate();
   console.log('schoolCourses의 들어있는 data:', schoolCourses);
+
+
+
   if (error) {
     console.error('Error loading school courses:', error);
     return <p>수강 과목 정보를 불러오는 중 오류가 발생했습니다.</p>;
@@ -32,6 +34,7 @@ const CourseSetting: React.FC<CourseSettingBoxProps> = ({
     return <p>로딩 중...</p>;
   }
 
+ 
   return (
     <CourseSettingContainer>
       <BannerBox>

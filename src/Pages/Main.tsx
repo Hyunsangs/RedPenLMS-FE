@@ -46,6 +46,8 @@ const Main: React.FC<MainProps> = ({studentId}) => {
     }
   }, [isSettingsLoading, userSettings]);
 
+  
+
   const handleOnboardingComplete = () => {
     setShowStepForm(false);
     localStorage.removeItem("showStepForm"); 
