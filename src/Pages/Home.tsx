@@ -10,7 +10,6 @@ import {
   PictureBox,
   Section1,
   Section2,
-  Section2Title,
   SubSection,
 } from 'Styles/HomeStyle';
 import { 

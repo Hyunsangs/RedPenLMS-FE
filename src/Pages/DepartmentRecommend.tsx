@@ -138,7 +138,6 @@ const DepartmentRecommend = () => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<number[]>(Array(10).fill(-1));
   const [result, setResult] = useState<string | null>(null);
-  const [recommendedCourses, setRecommendedCourses] = useState<string[]>([]); // 추천 강의 상태
 
   useEffect(() => {
     if (result) {
@@ -149,6 +148,8 @@ const DepartmentRecommend = () => {
       });
     }
   }, [result]);
+
+ 
 
   const handleSelect = (index: number) => {
     setAnswers((prev) => {

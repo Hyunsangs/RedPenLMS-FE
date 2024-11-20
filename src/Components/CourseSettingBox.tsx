@@ -9,7 +9,7 @@ import {
   ButtonContainer,
   NoneCourseSettingBox, 
 } from 'Styles/CourseSettingBoxStyle';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button} from '@chakra-ui/react';
 import { CourseSettingBoxProps } from 'Interface/interface';
 import { useSchoolCourseCheck } from 'hooks/useSchoolCourseCheck';
