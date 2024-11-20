@@ -1,73 +1,81 @@
-// CourseSetting 이거는
-// 만약 Home에서 사용자가 2학기 수강과목을 설정을 하지 않았을 때 보여야함.
-// 만약 설정을 하였다면 설정한 모습이 Home 바로 보이도록 설정.
-
+import {
+  CourseSettingContainer,
+  CourseSettingBox,
+  BannerBox,
+  CourseBox,
+  CourseInfo,
+  CourseName,
+  CourseDetails,
+  ButtonContainer,
+  NoneCourseSettingBox, 
+} from 'Styles/CourseSettingBoxStyle';
 import React from 'react';
-import styled from '@emotion/styled';
-import { Button } from '@chakra-ui/react';
+import { Button} from '@chakra-ui/react';
+import { CourseSettingBoxProps } from 'Interface/interface';
+import { useSchoolCourseCheck } from 'hooks/useSchoolCourseCheck';
+import { UserCourse } from 'Interface/interface';
+import { useNavigate } from 'react-router-dom';
 
-
-export const CourseSettingContainer = styled.div`
-  padding: 10px;
-  width: 100%;
-  height: 100%;
-`;
-
-
-export const CourseSettingBox = styled.div`
-  width: 100%;
-  height: 60%;
-  background-color: #2c3e50;
-  margin-top: 2%;
-  border: 3px solid grey;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  
-  h1 {
-    color: white;
-    font-size: 32px;
-    font-weight: 900;
-    margin-bottom: 15px;
+const CourseSetting: React.FC<CourseSettingBoxProps> = ({
+  studentId,
+  onCourseSetting,
+}) => {
+  const { data: schoolCourses = [], isLoading, error } = useSchoolCourseCheck(studentId);
+  const navigate = useNavigate();
+  console.log('schoolCourses의 들어있는 data:', schoolCourses);
+  if (error) {
+    console.error('Error loading school courses:', error);
+    return <p>수강 과목 정보를 불러오는 중 오류가 발생했습니다.</p>;
   }
 
-  h2 {
-    color: white;
-    font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 15px;
+  if (isLoading) {
+    return <p>로딩 중...</p>;
   }
-`;
-
-export const BannerBox = styled.div`
-    
-    width: 100%;
-    height: 38%;
-    background-image: url('/img/bannerImg1.png');
-    border: 3px solid grey;
-    border-radius: 10px;
-    background-size: cover;
-    background-position: center;
-`
-interface CourseSettingBoxProps {
-  onCourseSetting: () => void;
-}
-
-const CourseSetting: React.FC<CourseSettingBoxProps> = ({onCourseSetting}) => {
 
   return (
     <CourseSettingContainer>
-        <BannerBox />
+      <BannerBox>
+        <div>나의 성장을 돕는</div>
+        <div>LMS+AI</div>
+      </BannerBox>
+      {Array.isArray(schoolCourses) && schoolCourses.length > 0 ? (
         <CourseSettingBox>
-            <h1>2024년 2학기 수강하는 과목이 없습니다.</h1>
-            <h2>수강 과목을 설정하세요!</h2>
+          <h1>2024년 2학기 수강 과목</h1>
+          {schoolCourses.map(({ id, schoolCourse }) => (
+            <CourseBox key={id}>
+              <CourseInfo>
+                <CourseName>{schoolCourse.courseName}</CourseName>
+                <CourseDetails>
+                  과목 코드: {schoolCourse.courseId} | 학점: {schoolCourse.gradeScore}
+                </CourseDetails>
+              </CourseInfo>
+            </CourseBox>
+          ))}
+          <ButtonContainer>
             <Button
-            onClick={onCourseSetting} 
-            width='300px' height='50px' colorScheme='blue'>시작하기</Button>
+              onClick={() => navigate('./my_subject')}
+              width="400px"
+              height="50px"
+              colorScheme="blue"
+            >
+              보러 가기
+            </Button>
+          </ButtonContainer>
         </CourseSettingBox>
-        
+      ) : (
+        <NoneCourseSettingBox>
+          <h1>2024년 2학기 수강하는 과목이 없습니다.</h1>
+          <h2>수강 과목을 설정하세요!</h2>
+          <Button
+            onClick={onCourseSetting}
+            width="400px"
+            height="50px"
+            colorScheme="blue"
+          >
+            설정 하기
+          </Button>
+        </NoneCourseSettingBox>
+      )}
     </CourseSettingContainer>
   );
 };

@@ -1,3 +1,4 @@
+// Home.tsx 에 최 상단 메뉴바
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -14,7 +15,7 @@ export default function NavBar() {
     
     return (
         <NavbarContainer>
-            <WebTitle>RPLms</WebTitle>
+            <WebTitle>LMS+AI</WebTitle>
             <NavBarRightContainer>
                 <MenuTitle onClick={() => navigate('/login')}>로그인</MenuTitle>
                 <MenuTitle onClick={() => navigate('/register')}>회원가입</MenuTitle>

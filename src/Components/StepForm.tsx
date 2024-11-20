@@ -1,89 +1,34 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import styled from '@emotion/styled';
-
-interface StepFormProps {
-  onComplete: () => void;
-}
-
-export const Row = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding-top: 10px;
-`;
-
-export const Col = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-export const StepFormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-`;
-
-export const MainTitle = styled.div`
-  text-align: center;
-  width: 700px;
-  font-size: 32px;
-  padding: 10px;
-`;
-
-// Emotion 스타일링된 컴포넌트 정의
-export const Box = styled(motion.div)`
-  width: 400px;
-  padding: 20px;
-  background-color: #aed8f4;
-  display: flex;
-  text-align: center;
-  flex-direction: column;
-  border-radius: 8px;
-  margin-bottom: 20px;
-
-  h1 {
-    font-size: 28px;
-  }
-`;
-export const ChoiceButton = styled.button<{ selected: boolean }>`
-  padding: 10px 20px;
-  margin: 5px 0;
-  cursor: pointer;
-  border: 2px solid ${(props) => (props.selected ? '#4a90e2' : '#ffffff')};
-  background-color: ${(props) => (props.selected ? '#4a90e2' : '#aed8f4')};
-  color: ${(props) => (props.selected ? 'white' : 'black')};
-  border-radius: 8px;
-  &:hover {
-    background-color: #4a90e2;
-    color: white;
-  }
-`;
-
-// 애니메이션 효과 적용을 위한 Framer 설정
-export const boxVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.8 },
-};
-
-export const DeptButton = styled(ChoiceButton)``;
-
-export const BoxTitle = styled.div`
-  font-size: 28px;
-`;
+import React, { useState, useEffect } from 'react';
+import { submitStepFormData } from 'Api/api';
+import { 
+  Row,
+  Col,
+  StepFormContainer,
+  MainTitle,
+  Box,
+  ChoiceButton,
+  boxVariants,
+  BoxTitle,
+ } from 'Styles/StepFormStyle';
+import { StepFormProps } from 'Interface/interface';
+import { majors } from 'Constants/major';
+import { jobOptions } from 'Constants/jobOptions';
 
 const StepForm: React.FC<StepFormProps> = ({ onComplete }) => {
   const [step, setStep] = useState<number>(0);
-  const [department, setDepartment] = useState<string[]>([]);
-  const [grade, setGrade] = useState<number | null>(null);
-  const [doubleMajor, setDoubleMajor] = useState<boolean | null>(null);
+  const [major, setMajor] = useState<string | null>(null);
+  const [year, setYear] = useState<number | null>(null);
+  const [jobId, setJobId] = useState<number | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
 
-  const handleNext = () => {
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) setUsername(storedUsername);
+  }, []);
+
+  const handleNext = async () => {
     if (step === 2) {
+      await submitStepFormData({ departmentId: 1, major, year, jobId });
       onComplete();
     } else {
       setStep((prevStep) => prevStep + 1);
@@ -96,108 +41,59 @@ const StepForm: React.FC<StepFormProps> = ({ onComplete }) => {
     }
   };
 
-  const toggleDepartment = (dept: string) => {
-    if (doubleMajor && department.includes(dept)) {
-      setDepartment(department.filter((d) => d !== dept));
-    } else if (doubleMajor && department.length < 2) {
-      setDepartment([...department, dept]);
-    } else if (!doubleMajor) {
-      setDepartment([dept]);
-    }
-  };
-
   return (
     <StepFormContainer>
-      <MainTitle>유현상님, LMS PLUS+에 오신 걸 환영합니다 🙌🏻</MainTitle>
+      <MainTitle>{username}님, LMS PLUS+에 오신 걸 환영합니다 🙌🏻</MainTitle>
       {step === 0 && (
-        <Box
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={boxVariants}
-          transition={{ duration: 0.5 }}
-        >
-          <BoxTitle>복수 전공 여부를 선택하세요</BoxTitle>
-          <Row>
-            <ChoiceButton
-              onClick={() => setDoubleMajor(true)}
-              selected={doubleMajor === true}
-            >
-              예
-            </ChoiceButton>
-            <ChoiceButton
-              onClick={() => setDoubleMajor(false)}
-              selected={doubleMajor === false}
-            >
-              아니오
-            </ChoiceButton>
-          </Row>
+        <Box initial="hidden" animate="visible" exit="exit" variants={boxVariants} transition={{ duration: 0.5 }}>
+          <BoxTitle>전공을 선택하세요</BoxTitle>
+          <Col>
+            {majors.map((majorOption) => (
+              <ChoiceButton
+                key={majorOption}
+                selected={major === majorOption}
+                onClick={() => setMajor(majorOption)}
+              >
+                {majorOption}
+              </ChoiceButton>
+            ))}
+          </Col>
           <Row>
             <button onClick={handlePrev}>←</button>
-            <button onClick={handleNext} disabled={doubleMajor === null}>
-              →
-            </button>
+            <button onClick={handleNext} disabled={major === null}>→</button>
           </Row>
         </Box>
       )}
       {step === 1 && (
-        <Box
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={boxVariants}
-          transition={{ duration: 0.5 }}
-        >
-          <BoxTitle>학과를 선택하세요</BoxTitle>
-          <Col>
-            {['소프트웨어학과', '게임소프트웨어학과', '정보보안학과'].map(
-              (dept) => (
-                <DeptButton
-                  key={dept}
-                  onClick={() => toggleDepartment(dept)}
-                  selected={department.includes(dept)}
-                >
-                  {dept}
-                </DeptButton>
-              ),
-            )}
-          </Col>
+        <Box initial="hidden" animate="visible" exit="exit" variants={boxVariants} transition={{ duration: 0.5 }}>
+          <BoxTitle>학년을 선택해주세요</BoxTitle>
+          {[1, 2, 3, 4].map((yearOption) => (
+            <ChoiceButton
+              key={yearOption}
+              onClick={() => setYear(yearOption)}
+              selected={year === yearOption}
+            >
+              {yearOption}학년
+            </ChoiceButton>
+          ))}
           <Row>
             <button onClick={handlePrev}>←</button>
-            <button
-              onClick={handleNext}
-              disabled={
-                doubleMajor ? department.length !== 2 : department.length !== 1
-              }
-            >
-              →
-            </button>
+            <button onClick={handleNext} disabled={year === null}>→</button>
           </Row>
         </Box>
       )}
       {step === 2 && (
-        <Box
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={boxVariants}
-          transition={{ duration: 0.5 }}
-        >
-          <BoxTitle>학년을 선택해주세요</BoxTitle>
-          {[1, 2, 3, 4].map((year) => (
-            <DeptButton
-              key={year}
-              onClick={() => setGrade(year)}
-              selected={grade === year}
-            >
-              {year}학년
-            </DeptButton>
-          ))}
+        <Box initial="hidden" animate="visible" exit="exit" variants={boxVariants} transition={{ duration: 0.5 }}>
+          <BoxTitle>직무를 선택해주세요</BoxTitle>
+          <select onChange={(e) => setJobId(Number(e.target.value))} value={jobId ?? ''}>
+            <option value="">직무 선택</option>
+            {jobOptions.map((job) => (
+              <option key={job.id} value={job.id}>{job.name}</option>
+            ))}
+          </select>
           <Row>
             <button onClick={handlePrev}>←</button>
-            <button onClick={handleNext} disabled={grade === null}>
-              →
-            </button>
+            <button onClick={handleNext} disabled={jobId === null}>완료</button>
           </Row>
         </Box>
       )}

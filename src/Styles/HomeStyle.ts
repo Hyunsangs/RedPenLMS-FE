@@ -9,13 +9,14 @@ export const MainSection = styled.div`
     display: flex;
     justify-content: flex-start;
     height: 100%;
-    background-image: url('/img/bgimg2.2.jpg');
+    background-image: url('/img/mainHomeLogo.jpg');
     object-fit: fill;
     background-repeat: no-repeat;
     background-size: cover; /* 배경 이미지가 컨테이너 크기에 맞게 조정 */
 `
 
 export const Section1 = styled.div`
+    color: white;
     height: 500px;
     display: flex;
     flex-direction: column;
@@ -61,14 +62,25 @@ export const ExplainBoxContainer = styled.div`
 `
 
 export const ExplainBox = styled.div`
-    background-color: aliceblue;
+    background-color: burlywood;
     display: flex;
     flex-direction: column;
     padding: 50px;
+    text-align: center;
+    h1 {
+        font-size: 24px;
+    }
+    p {
+        opacity: 0.7;
+    }
 `
 
-export const PictureBox = styled.div`
-    width: 250px;
-    height: 150px;
-    background-color: red;
-`
+export const PictureBox = styled.div<{ imageUrl: string }>`
+  width: 250px;
+  height: 150px;
+  background-color: red;
+  background-image: url(${(props) => props.imageUrl});
+  background-size: cover; /* 이미지가 박스에 맞게 조정 */
+  background-position: center; /* 이미지 가운데 정렬 */
+  border-radius: 8px; /* 선택적으로 테두리 둥글게 */
+`;
