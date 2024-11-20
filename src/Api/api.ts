@@ -5,7 +5,7 @@ import { CoursesData } from 'Interface/interface';
 
 // Axios 인스턴스 생성
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: process.env.REACT_APP_BACKEND_SERVER,
   withCredentials: true, // 쿠키 사용을 위한 설정
 });
 
