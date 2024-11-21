@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-
+import { fetchRecommendedCourses } from 'Api/api';
 // 스타일 정의
 export const LectureRecommendContainer = styled.div`
   padding: 20px;
@@ -52,17 +52,26 @@ export const CourseCard = styled.div`
     transform: translateY(-5px);
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   }
+
+  h3 {
+    padding: 5px;
+    color: #007bff;
+  }
 `;
 
 export const CourseTitle = styled.h3`
-  font-size: 15px;
+  padding: 15px;
+  font-size: 22px;
   font-weight: bold;
   color: #495057;
 `;
 
 export const DepartmentRecommend = styled.p`
-  font-size: 14px;
-  color: #6c757d;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: #e9e9e9;
+  font-size: 15px;
+  color: black;
   margin-top: 8px;
 `;
 
@@ -110,49 +119,58 @@ export const DepartmentCard = styled.button`
 
 // 강의 추천 컴포넌트 템플릿
 const LectureRecommend = () => {
+  const [ recommendSchoolCourses, setRecommendSchoolCourses ] = useState<any[]>([]); // 추천 강의 데이터
+  const [jobId, setJobId] = useState<number | null>(null); 
+  const [ username, setUsername] = useState<string | null>(null);
+  // jobId 값 가져오고 추천 데이터 요청
 
+  useEffect(() => {
+    const storedJobId = localStorage.getItem('jobId');
+    const storedUsername = localStorage.getItem('username');
+    if (storedJobId && storedUsername) {
+      setUsername(storedUsername); // 유저네임 설정
+      setJobId(Number(storedJobId)); // jobId 설정
+      fetchRecommendations(Number(storedJobId)); // 추천 데이터 요청
+    }
+
+  }, []);
   const navigate = useNavigate();
+
+   // 추천 데이터를 가져오는 함수
+   const fetchRecommendations = async (id: number) => {
+    try {
+      const data = await fetchRecommendedCourses(id); // API 호출
+      console.log(data);
+      setRecommendSchoolCourses(data.recommendedCourses); // 추천 데이터 저장
+    } catch (error) {
+      console.error('추천 강의 데이터를 가져오는 데 실패했습니다:', error);
+    }
+  };
+
 
   return (
     <LectureRecommendContainer>
       {/* 상단 헤더 */}
       <HeaderBar>
-        <HeaderTitle>000 님의 추천 교과목 및 학과</HeaderTitle>
+        <HeaderTitle>{username}님의 추천 교과목 및 학과</HeaderTitle>
         <SubTitle>
           게임 소프트웨어학과, 정보 보안학과, 인공지능학과 3개를 분석하여 추천해드려요
         </SubTitle>
       </HeaderBar>
 
-      {/* 추천 강의 섹션 */}
-      <RecommendSection>
-        <h2>추천 교과목</h2>
-        <CourseCard>
-          <CourseTitle>웹/앱 개발 필수 과목</CourseTitle>
-          <DepartmentRecommend>적합 학과: 소프트웨어 개발</DepartmentRecommend>
-          <TagContainer>
-            <Tag>기초</Tag>
-            <Tag>3학점</Tag>
-            <Tag>1학년</Tag>
-          </TagContainer>
-        </CourseCard>
-        <CourseCard>
-          <CourseTitle>데이터 보안 기초</CourseTitle>
-          <DepartmentRecommend>적합 학과: 정보 보안학과</DepartmentRecommend>
-          <TagContainer>
-            <Tag>중급</Tag>
-            <Tag>3학점</Tag>
-            <Tag>2학년</Tag>
-          </TagContainer>
-        </CourseCard>
-        <CourseCard>
-          <CourseTitle>스마트아이 기술 개론</CourseTitle>
-          <DepartmentRecommend>적합 학과: 스마트아이학과</DepartmentRecommend>
-          <TagContainer>
-            <Tag>심화</Tag>
-            <Tag>3학점</Tag>
-            <Tag>3학년</Tag>
-          </TagContainer>
-        </CourseCard>
+     {/* 추천 강의 섹션 */}
+     <RecommendSection>
+        <h2>추천 학교 강의</h2>
+        {recommendSchoolCourses.map((course) => (
+          <CourseCard key={course.course_id}>
+            <CourseTitle>{course.course_name}</CourseTitle>
+            <h3>강의 개요 및 목표</h3>
+            <DepartmentRecommend>{course.course_details}</DepartmentRecommend>
+            <TagContainer>
+              <Tag>{course.grade_score}학점</Tag>
+            </TagContainer>
+          </CourseCard>
+        ))}
       </RecommendSection>
 
       {/* 학과 추천 섹션 */}
