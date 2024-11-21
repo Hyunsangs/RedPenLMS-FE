@@ -26,8 +26,8 @@ export default function Home() {
       <MainSection>
         <Section1>
           <p>소프트웨어공학부 학생들을 위한 </p>
-          <p><strong>"맞춤형 LMS 플랫폼"</strong></p>
-          <p>희망 직무를 바탕으로 교과목과 강의 <strong>"추천"</strong></p>
+          <p><strong>&quot;맞춤형 LMS 플랫폼&quot;</strong></p>
+          <p>희망 직무를 바탕으로 교과목과 강의 <strong>&quot;추천&quot;</strong></p>
           <p>성공적인 학업을 돕는 최고의 <strong>파트너</strong></p>
           <Button onClick={() => navigate('/login')} width="400px" height="50px" colorScheme="blue">시작하기</Button>
         </Section1>

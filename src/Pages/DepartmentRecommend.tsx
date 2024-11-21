@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import confetti from 'canvas-confetti';
-import { fetchRecommendedCourses } from 'Api/api'; // 추천 강의 API 호출 함수
+
 export const DepartmentRecommendContainer = styled.div`
   width: 100%;
   display: flex;
@@ -150,6 +150,8 @@ const DepartmentRecommend = () => {
   }, [result]);
 
  
+
+
 
   const handleSelect = (index: number) => {
     setAnswers((prev) => {
