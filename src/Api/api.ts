@@ -1,18 +1,12 @@
 import axios from 'axios';
+import qs from 'qs'; // URL 인코딩을 위해 qs 라이브러리 사용
 import { Course } from 'Interface/interface';
 import { CoursesData } from 'Interface/interface';
-import qs from 'qs'; // URL 인코딩을 위해 qs 라이브러리 사용
-import https from 'https'; // HTTPS 에이전트 설정을 위해 추가
 
-// HTTPS 에이전트 생성 (SSL 인증 무시 설정)
-const httpsAgent = new https.Agent({
-  rejectUnauthorized: false, // SSL 인증 무시
-});
 // Axios 인스턴스 생성
 const apiClient = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_SERVER,
   withCredentials: true, // 쿠키 사용을 위한 설정
-  httpsAgent, // HTTPS 에이전트 추가
 });
 
 // 세션 상태 확인 함수
@@ -192,7 +186,7 @@ export const deleteCourse = async (
 export const fetchRecommendedCourses = async (jobId: number) => {
   try {
     const response = await apiClient.post('/profile/recommendations', { jobId });
-    console.log('추천 교과목 데이터:',response.data)
+    console.log('추천 교과목 데이터ㅣ:',response.data)
     return response.data; // 추천 데이터를 반환
   } catch (error) {
     console.error('추천 강의 데이터를 가져오는 데 실패했습니다:', error);
