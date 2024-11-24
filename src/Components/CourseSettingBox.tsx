@@ -14,6 +14,8 @@ import { Button} from '@chakra-ui/react';
 import { CourseSettingBoxProps } from 'Interface/interface';
 import { useSchoolCourseCheck } from 'hooks/useSchoolCourseCheck';
 import { useNavigate } from 'react-router-dom';
+import Loading from './Loading';
+import { CenteredWrapper } from './LoadingStyle';
 
 const CourseSetting: React.FC<CourseSettingBoxProps> = ({
   studentId,
@@ -31,7 +33,12 @@ const CourseSetting: React.FC<CourseSettingBoxProps> = ({
   }
 
   if (isLoading) {
-    return <p>로딩 중...</p>;
+    return (
+      <CenteredWrapper>
+        <Loading />
+      </CenteredWrapper>
+
+    )
   }
 
  
