@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { fetchRecommendedCourses } from 'Api/api';
+import Loading from 'Components/Loading';
+import { CenteredWrapper } from 'Components/LoadingStyle';
 // 스타일 정의
 export const LectureRecommendContainer = styled.div`
   padding: 20px;
@@ -91,7 +93,6 @@ export const Tag = styled.span`
 `;
 
 export const DepartmentSection = styled.div`
-    
   margin-top: 40px;
 `;
 
@@ -115,74 +116,77 @@ export const DepartmentCard = styled.button`
   }
 `;
 
-
-
 // 강의 추천 컴포넌트 템플릿
 const LectureRecommend = () => {
-  const [ recommendSchoolCourses, setRecommendSchoolCourses ] = useState<any[]>([]); // 추천 강의 데이터
-  const [jobId, setJobId] = useState<number | null>(null); 
-  const [ username, setUsername] = useState<string | null>(null);
-  // jobId 값 가져오고 추천 데이터 요청
+  const [recommendSchoolCourses, setRecommendSchoolCourses] = useState<any[]>(
+    [],
+  );
+  const [jobId, setJobId] = useState<number | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedJobId = localStorage.getItem('jobId');
     const storedUsername = localStorage.getItem('username');
     if (storedJobId && storedUsername) {
-      setUsername(storedUsername); // 유저네임 설정
-      setJobId(Number(storedJobId)); // jobId 설정
-      fetchRecommendations(Number(storedJobId)); // 추천 데이터 요청
+      setUsername(storedUsername);
+      setJobId(Number(storedJobId));
+      fetchRecommendations(Number(storedJobId));
+    } else {
+      setIsLoading(false);
     }
-
   }, []);
-  const navigate = useNavigate();
 
-   // 추천 데이터를 가져오는 함수
-   const fetchRecommendations = async (id: number) => {
+  const fetchRecommendations = async (id: number) => {
     try {
-      const data = await fetchRecommendedCourses(id); // API 호출
-      console.log(data);
-      setRecommendSchoolCourses(data.recommendedCourses); // 추천 데이터 저장
+      setIsLoading(true);
+      const data = await fetchRecommendedCourses(id);
+      setRecommendSchoolCourses(data.recommendedCourses);
     } catch (error) {
-      console.error('추천 강의 데이터를 가져오는 데 실패했습니다:', error);
+      console.error('Failed to fetch recommendations:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-
-  return (
+  return isLoading ? (
+    <CenteredWrapper>
+      <Loading />
+    </CenteredWrapper>
+  ) : (
     <LectureRecommendContainer>
-      {/* 상단 헤더 */}
       <HeaderBar>
         <HeaderTitle>{username}님의 추천 교과목 및 학과</HeaderTitle>
         <SubTitle>
-          게임 소프트웨어학과, 정보 보안학과, 인공지능학과 3개를 분석하여 추천해드려요
+          게임 소프트웨어학과, 정보 보안학과, 인공지능학과 3개를 분석하여
+          추천해드려요
         </SubTitle>
       </HeaderBar>
-
-     {/* 추천 강의 섹션 */}
-     <RecommendSection>
+      <RecommendSection>
         <h2>추천 학교 강의</h2>
-        {recommendSchoolCourses.map((course) => (
-          <CourseCard key={course.course_id}>
-            <CourseTitle>{course.course_name}</CourseTitle>
-            <h3>강의 개요 및 목표</h3>
-            <DepartmentRecommend>{course.course_details}</DepartmentRecommend>
-            <TagContainer>
-              <Tag>{course.grade_score}학점</Tag>
-            </TagContainer>
-          </CourseCard>
-        ))}
+        {recommendSchoolCourses.length > 0 ? (
+          recommendSchoolCourses.map((course) => (
+            <CourseCard key={course.course_id}>
+              <CourseTitle>{course.course_name}</CourseTitle>
+              <h3>강의 개요 및 목표</h3>
+              <DepartmentRecommend>{course.course_details}</DepartmentRecommend>
+              <TagContainer>
+                <Tag>{course.grade_score}학점</Tag>
+              </TagContainer>
+            </CourseCard>
+          ))
+        ) : (
+          <p>추천 강의가 없습니다.</p>
+        )}
       </RecommendSection>
-
-      {/* 학과 추천 섹션 */}
       <DepartmentSection>
         <DepartmentTitle>적합 학과 추천</DepartmentTitle>
-        
         <DepartmentCard
           onClick={() => navigate('/dashboard/department_recommend')}
         >
           추천받기
         </DepartmentCard>
-
       </DepartmentSection>
     </LectureRecommendContainer>
   );

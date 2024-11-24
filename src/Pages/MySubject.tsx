@@ -8,7 +8,7 @@ import {
   fetchInflearnLectureRandomRecommendations,
 } from 'Api/api';
 import { useSchoolCourseCheck } from 'hooks/useSchoolCourseCheck';
-import { Link } from 'react-router-dom';
+import { CenteredWrapper } from 'Components/LoadingStyle';
 // 스타일 정의
 
 export const MySubjectContainer = styled.div`
@@ -117,12 +117,12 @@ export const LectureRecommendContainer = styled.div`
     color: #7c7c7c;
     margin-bottom: 11px;
     padding: 0px 5px;
-    font-size: 16px;
+    font-size: 14px;
   }
 `;
 
 export const LectureRecommendTitle = styled.div`
-line-height: 25px;
+  line-height: 25px;
   align-self: flex-start;
   font-size: 24px;
   font-weight: 900;
@@ -181,7 +181,6 @@ export const VideoBox = styled.div<{ thumbnail: string }>`
 `;
 
 export const InflearnCourseName = styled.div`
-  
   border-radius: 12px;
   padding: 0px 12px;
   font-size: 18px;
@@ -213,21 +212,12 @@ export const InleanRandomButton = styled.div`
   margin-top: 60px;
   font-weight: bold;
   &:hover {
-    transform: scale(1.10);
+    transform: scale(1.1);
     color: #034e9e;
   }
 `;
 
-// SchoolCourse 타입 정의
-interface SchoolCourse {
-  id: number;
-  schoolCourse: {
-    courseId: string;
-    courseName: string;
-    courseDetails: string;
-    gradeScore: number;
-  };
-}
+
 
 // 추천 데이터 타입 정의
 interface Recommendation {
@@ -246,10 +236,13 @@ interface ProcessedRecommendation {
 
 const MySubject: React.FC = () => {
   const studentId = localStorage.getItem('studentId') || '';
-  const { data: coursesData = {}, isLoading, error } = useMyCourses(studentId);
-  const { data: schoolCourses = [] } = useSchoolCourseCheck(studentId) as {
-    data: SchoolCourse[];
-  };
+  const {
+    data: coursesData = {},
+    isLoading: isLoadingCourses,
+    error: coursesError,
+  } = useMyCourses(studentId);
+  const { data: schoolCourses = [], isLoading: isLoadingSchoolCourses } =
+    useSchoolCourseCheck(studentId);
 
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
   const [expandedWeeks, setExpandedWeeks] = useState<{
@@ -258,6 +251,15 @@ const MySubject: React.FC = () => {
   const [processedData, setProcessedData] = useState<ProcessedRecommendation[]>(
     [],
   );
+
+  const [isLoading, setIsLoading] = useState<boolean>(true); // 통합 로딩 상태 추가
+
+  // 통합 로딩 상태 관리
+  useEffect(() => {
+    if (!isLoadingCourses && !isLoadingSchoolCourses) {
+      setIsLoading(false); // 모든 데이터 로드 완료 시 로딩 종료
+    }
+  }, [isLoadingCourses, isLoadingSchoolCourses]);
 
   // 강의 토글
   const toggleCourse = (courseName: string) => {
@@ -269,6 +271,7 @@ const MySubject: React.FC = () => {
     setExpandedWeeks((prev) => ({ ...prev, [week]: !prev[week] }));
   };
 
+  // 랜덤 강의 불러오는 함수
   const onClickhandlerInfleanRandom = async () => {
     if (schoolCourses.length > 0) {
       try {
@@ -276,10 +279,8 @@ const MySubject: React.FC = () => {
           courseName: course.schoolCourse.courseName,
           courseDetails: course.schoolCourse.courseDetails,
         }));
-
         const response =
           await fetchInflearnLectureRandomRecommendations(requestData);
-
         const data: ProcessedRecommendation[] = response.map((item: any) => ({
           schoolCourseName: item.input.courseName,
           schoolCourseDetails: item.input.courseDetails,
@@ -308,7 +309,6 @@ const MySubject: React.FC = () => {
           }));
           const response =
             await fetchInflearnLectureRecommendations(requestData);
-
           const data: ProcessedRecommendation[] = response.map((item: any) => ({
             schoolCourseName: item.input.courseName,
             schoolCourseDetails: item.input.courseDetails,
@@ -319,19 +319,27 @@ const MySubject: React.FC = () => {
               inflearnCourseDetails: rec.inflearnCourseDetails,
             })),
           }));
-
           setProcessedData(data);
         } catch (err) {
           console.error('추천 데이터를 가져오는 중 오류 발생:', err);
         }
       }
     };
-
     fetchRecommendations();
   }, [schoolCourses]);
 
-  if (isLoading) return <Loading />;
-  if (error) return <p>데이터를 가져오는 중 오류가 발생했습니다.</p>;
+  if (isLoading) {
+    // 통합 로딩 상태에서 Loading 컴포넌트 출력
+    return (
+      <CenteredWrapper>
+        <Loading />
+      </CenteredWrapper>
+    );
+  }
+
+  if (coursesError) {
+    return <p>데이터를 가져오는 중 오류가 발생했습니다.</p>;
+  }
 
   // URL로 이동하는 함수 추가
   const handleVideoBoxClick = (url: string) => {
@@ -394,7 +402,9 @@ const MySubject: React.FC = () => {
         </CourseContainer>
       ))}
       <LectureRecommendContainer>
-        <LectureRecommendTitle>추가적으로 공부해보고 싶다면?</LectureRecommendTitle>
+        <LectureRecommendTitle>
+          추가적으로 공부해보고 싶다면?
+        </LectureRecommendTitle>
         <p>AI 기반으로 사설 강의 분석하여 보여 드려요</p>
         <Line />
         {processedData.map((item, index) => (
