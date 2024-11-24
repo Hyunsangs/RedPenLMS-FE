@@ -6,6 +6,9 @@ import { CoursesData } from 'Interface/interface';
 // Axios 인스턴스 생성
 const apiClient = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_SERVER,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+  },
   withCredentials: true, // 쿠키 사용을 위한 설정
 });
 
@@ -179,14 +182,15 @@ export const deleteCourse = async (
     console.error('강의 삭제 실패:', error);
     alert('강의를 삭제하는 중 오류가 발생했습니다.');
   }
-}
-
+};
 
 // 사용자 추천 학교 강의 데이터 가져오는 함수
 export const fetchRecommendedCourses = async (jobId: number) => {
   try {
-    const response = await apiClient.post('/profile/recommendations', { jobId });
-    console.log('추천 교과목 데이터ㅣ:',response.data)
+    const response = await apiClient.post('/profile/recommendations', {
+      jobId,
+    });
+    console.log('추천 교과목 데이터ㅣ:', response.data);
     return response.data; // 추천 데이터를 반환
   } catch (error) {
     console.error('추천 강의 데이터를 가져오는 데 실패했습니다:', error);
@@ -194,16 +198,18 @@ export const fetchRecommendedCourses = async (jobId: number) => {
   }
 };
 
-// Inflearn 강의 추천 API 호출 함수 
-export const fetchInflearnLectureRecommendations = async (courses: { courseName: string; courseDetails: string }[]) => {
+// Inflearn 강의 추천 API 호출 함수
+export const fetchInflearnLectureRecommendations = async (
+  courses: { courseName: string; courseDetails: string }[],
+) => {
   try {
     const response = await apiClient.post(
       'profile/recommendations/inflearn/multiple',
-      courses
+      courses,
     );
     console.log(courses);
-    console.log('인프런 추천 강의 인프런 데이터:',response.data);
-    
+    console.log('인프런 추천 강의 인프런 데이터:', response.data);
+
     return response.data; // 추천 데이터를 반환
   } catch (error) {
     console.error('추천 강의 데이터를 가져오는 데 실패했습니다:', error);
