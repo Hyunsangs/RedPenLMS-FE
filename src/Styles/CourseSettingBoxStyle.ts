@@ -70,7 +70,7 @@ white-space: nowrap;
 
 export const BannerBox = styled.div`
     
-    width: 100%;
+    min-width: 100%;
     height: 38%;
     padding: 100px;
     font-size: 32px;

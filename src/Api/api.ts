@@ -207,8 +207,27 @@ export const fetchInflearnLectureRecommendations = async (
       'profile/recommendations/inflearn/multiple',
       courses,
     );
-    console.log(courses);
+    
     console.log('인프런 추천 강의 인프런 데이터:', response.data);
+
+    return response.data; // 추천 데이터를 반환
+  } catch (error) {
+    console.error('추천 강의 데이터를 가져오는 데 실패했습니다:', error);
+    throw error;
+  }
+};
+
+// Inflearn 강의 추천 랜덤 API 호출 함수
+export const fetchInflearnLectureRandomRecommendations = async (
+  courses: { courseName: string; courseDetails: string }[],
+) => {
+  try {
+    const response = await apiClient.post(
+      'profile/recommendations/inflearn/multiple/random',
+      courses,
+    );
+  
+    console.log('랜덤으로 온 인프런 데이터:', response.data);
 
     return response.data; // 추천 데이터를 반환
   } catch (error) {
