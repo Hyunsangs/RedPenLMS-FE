@@ -20,6 +20,7 @@ export const MainContent = styled.main`
   padding: 20px 100px;
   background-color: #e9e9e9;
   overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 interface DashboardHomeProps {

@@ -3,12 +3,17 @@ import styled from '@emotion/styled';
 import { IoChevronDown, IoChevronUp } from 'react-icons/io5';
 import { useMyCourses } from 'hooks/useMyCourses';
 import Loading from 'Components/Loading';
-import { fetchInflearnLectureRecommendations } from 'Api/api';
+import {
+  fetchInflearnLectureRecommendations,
+  fetchInflearnLectureRandomRecommendations,
+} from 'Api/api';
 import { useSchoolCourseCheck } from 'hooks/useSchoolCourseCheck';
 import { Link } from 'react-router-dom';
 // 스타일 정의
 
-export const MySubjectContainer = styled.div``;
+export const MySubjectContainer = styled.div`
+  overflow-x: hidden;
+`;
 export const Line = styled.div`
   border-width: 1px;
   border-color: #adabab;
@@ -102,10 +107,23 @@ export const CourseInfo = styled.div`
 /* 강의 추천 하는 부분  */
 
 export const LectureRecommendContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
   margin-top: 50px;
+
+  p {
+    color: #7c7c7c;
+    margin-bottom: 11px;
+    padding: 0px 5px;
+    font-size: 16px;
+  }
 `;
 
 export const LectureRecommendTitle = styled.div`
+line-height: 25px;
+  align-self: flex-start;
   font-size: 24px;
   font-weight: 900;
 `;
@@ -120,6 +138,7 @@ export const LectureRecommendBox = styled.div`
 `;
 
 export const SchoolLectureTitle = styled.div`
+  margin-left: 10px;
   font-size: 24px;
   font-weight: 900;
   margin-bottom: 10px;
@@ -138,14 +157,10 @@ export const InflearnBox = styled.div`
 `;
 
 export const InflearnContentContainer = styled.div`
+  border-radius: 12px;
   background-color: #e9e9e9;
-  padding: 10px;
+  padding: 14px;
   height: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 5; /* 여기에 제한하고자 하는 줄 수를 입력한다. */
-  -webkit-box-orient: vertical;
 `;
 
 export const VideoBox = styled.div<{ thumbnail: string }>`
@@ -155,9 +170,9 @@ export const VideoBox = styled.div<{ thumbnail: string }>`
   background-position: center;
   height: 200px;
   border-radius: 8px;
-  background-color: blue;
   transition: all 0.3s ease;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 10px;
   cursor: pointer;
   &:hover {
     transform: scale(1.02);
@@ -165,24 +180,42 @@ export const VideoBox = styled.div<{ thumbnail: string }>`
   }
 `;
 
-// export const VideoBox = styled.div<{ thumbnail: string }>`
-//   background-image: url(${(props) => props.thumbnail});
-//   background-size: cover;
-//   background-position: center;
-//   aspect-ratio: 16 / 9; /* 가로 세로 비율 설정 */
-//   width: 100%; /* 부모 요소에 맞게 가로 크기 설정 */
-
-//   border-radius: 8px;
-//   background-color: blue;
-// `;
-
 export const InflearnCourseName = styled.div`
+  
+  border-radius: 12px;
+  padding: 0px 12px;
   font-size: 18px;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 여기에 제한하고자 하는 줄 수를 입력한다. */
+  -webkit-box-orient: vertical;
 `;
 
 export const InflearnCourseDetails = styled.div`
+  margin-top: 10px;
   font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 5; /* 여기에 제한하고자 하는 줄 수를 입력한다. */
+  -webkit-box-orient: vertical;
+`;
+
+export const InleanRandomButton = styled.div`
+  margin-bottom: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #007bff;
+  margin-top: 60px;
+  font-weight: bold;
+  &:hover {
+    transform: scale(1.10);
+    color: #034e9e;
+  }
 `;
 
 // SchoolCourse 타입 정의
@@ -235,6 +268,35 @@ const MySubject: React.FC = () => {
   const toggleWeek = (week: number) => {
     setExpandedWeeks((prev) => ({ ...prev, [week]: !prev[week] }));
   };
+
+  const onClickhandlerInfleanRandom = async () => {
+    if (schoolCourses.length > 0) {
+      try {
+        const requestData = schoolCourses.map((course: any) => ({
+          courseName: course.schoolCourse.courseName,
+          courseDetails: course.schoolCourse.courseDetails,
+        }));
+
+        const response =
+          await fetchInflearnLectureRandomRecommendations(requestData);
+
+        const data: ProcessedRecommendation[] = response.map((item: any) => ({
+          schoolCourseName: item.input.courseName,
+          schoolCourseDetails: item.input.courseDetails,
+          recommendations: item.recommendations.map((rec: any) => ({
+            courseURL: rec.courseURL,
+            imgURL: rec.imgURL,
+            inflearnCourseName: rec.inflearnCourseName,
+            inflearnCourseDetails: rec.inflearnCourseDetails,
+          })),
+        }));
+        setProcessedData(data);
+      } catch (err) {
+        console.error('추천 데이터를 가져오는 중 오류 발생:', err);
+      }
+    }
+  };
+
   // 추천 데이터 fetch 및 가공
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -332,7 +394,8 @@ const MySubject: React.FC = () => {
         </CourseContainer>
       ))}
       <LectureRecommendContainer>
-        <LectureRecommendTitle>강의 추천</LectureRecommendTitle>
+        <LectureRecommendTitle>추가적으로 공부해보고 싶다면?</LectureRecommendTitle>
+        <p>AI 기반으로 사설 강의 분석하여 보여 드려요</p>
         <Line />
         {processedData.map((item, index) => (
           <LectureRecommendBox key={index}>
@@ -357,6 +420,9 @@ const MySubject: React.FC = () => {
             </GridContainer>
           </LectureRecommendBox>
         ))}
+        <InleanRandomButton onClick={onClickhandlerInfleanRandom}>
+          다른 강의를 추천 받고 싶으신가요?
+        </InleanRandomButton>
       </LectureRecommendContainer>
     </MySubjectContainer>
   );
