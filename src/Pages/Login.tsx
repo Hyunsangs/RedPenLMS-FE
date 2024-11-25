@@ -67,7 +67,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       <LoginContainer>
         <LoginTitleContainer>
           <h1>RmsPlus</h1>
-          <p>아이디를 선택하여 빨간펜lms를 이용하세요</p>
+          <p>아이디를 선택하여 RmsPlus를 이용하세요</p>
         </LoginTitleContainer>
         <hr />
         <LoginFormContainer onSubmit={handleSubmit}>
