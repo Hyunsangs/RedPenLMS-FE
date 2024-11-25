@@ -61,8 +61,8 @@ export default function Register() {
     <GlobalDiv>
       <RegisterContainer>
         <RegisterTitleContainer>
-          <h1>RPLms</h1>
-          <p>회원가입을 통해 빨간펜lms를 이용하세요</p>
+          <h1>LmsPlus</h1>
+          <p>회원가입을 통해 빨간펜LmsPlus를 이용하세요</p>
         </RegisterTitleContainer>
         <hr />
         <RegisterFormContainer onSubmit={handleSubmit}>
