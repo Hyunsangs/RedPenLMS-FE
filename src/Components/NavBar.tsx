@@ -15,7 +15,7 @@ export default function NavBar() {
     
     return (
         <NavbarContainer>
-            <WebTitle>LMS+AI</WebTitle>
+            <WebTitle>LmsPlus</WebTitle>
             <NavBarRightContainer>
                 <MenuTitle onClick={() => navigate('/login')}>로그인</MenuTitle>
                 <MenuTitle onClick={() => navigate('/register')}>회원가입</MenuTitle>

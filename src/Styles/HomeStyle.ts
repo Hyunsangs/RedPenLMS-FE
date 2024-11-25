@@ -42,7 +42,7 @@ export const SubSection = styled.div`
 
 export const Section2 = styled.div`
   padding: 50px;
-  width: 70%;
+  width: 100%;
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -53,12 +53,14 @@ export const Section2Title = styled.h1`
 `;
 
 export const ExplainBoxContainer = styled.div`
+  height: 100%;
+  width: 100%;
   display: flex;
 `;
 
 export const ExplainBox = styled.div`
   width: 100%;
-  background-color: burlywood;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 50px;
@@ -74,7 +76,6 @@ export const ExplainBox = styled.div`
 export const PictureBox = styled.div<{ imageUrl: string }>`
   width: 100%;
   height: 150px;
-  background-color: red;
   background-image: url(${(props) => props.imageUrl});
   background-size: cover; /* 이미지가 박스에 맞게 조정 */
   background-position: center; /* 이미지 가운데 정렬 */
