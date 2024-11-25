@@ -19,11 +19,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component: Component })
       </CenteredWrapper>
     );
 
-  return sessionStatus?.authenticated ? (
-    <Component />
-  ) : (
-    <Navigate to="/login" replace />
-  );
+    if (!sessionStatus?.authenticated) {
+      // 로컬 스토리지 데이터 삭제
+      localStorage.removeItem('studentId');
+      localStorage.removeItem('username');
+      localStorage.removeItem('jobId'); // 필요하다면 다른 키도 추가로 삭제
+  
+      return <Navigate to="/login" replace />;
+    }
+  
+    return <Component />;
 };
 
 export default ProtectedRoute;

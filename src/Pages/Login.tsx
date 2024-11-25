@@ -66,7 +66,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     <GlobalDiv>
       <LoginContainer>
         <LoginTitleContainer>
-          <h1>RPLms</h1>
+          <h1>RmsPlus</h1>
           <p>아이디를 선택하여 빨간펜lms를 이용하세요</p>
         </LoginTitleContainer>
         <hr />
@@ -94,7 +94,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         </ExtraContainer>
         <hr />
         <Notification>
-          회원가입 시 RPlms의 서비스 약관 및 개인정보 처리방침을 확인하였으며,
+          회원가입 시 RmsPlus의 서비스 약관 및 개인정보 처리방침을 확인하였으며,
           동의합니다.
         </Notification>
         {isError && <p>로그인 중 에러가 발생했습니다. 다시 시도해주세요.</p>}
